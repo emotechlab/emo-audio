@@ -1,6 +1,7 @@
 # Emo-Audio
 
 [![Build Status](https://travis-ci.com/emotechlab/emo-audio.svg?branch=master)](https://travis-ci.com/emotechlab/emo-audio)
+[![Coverage Status](https://coveralls.io/repos/github/emotechlab/emo-audio/badge.svg?branch=master)](https://coveralls.io/github/emotechlab/emo-audio?branch=master)
 [![License:MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Introduction
