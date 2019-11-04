@@ -1,5 +1,8 @@
 # Emo-Audio
 
+[![Build Status](https://travis-ci.com/emotechlab/emo-audio.svg?branch=master)](https://travis-ci.com/emotechlab/emo-audio)
+[![License:MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Introduction
 This crate is intended to provide Rust equivalents to common audio processing
 routines used by Emotech. As this project goes on it will aim to achieve a

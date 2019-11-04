@@ -13,18 +13,17 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
-before_script: |
-  - if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
-      cargo install -f cargo-tarpaulin
-    fi
+before_script:
   - rustup component add rustfmt
 script:
-  - cargo install 
+  - cargo install clippy
   - cargo clean
   - cargo build 
   - cargo test
+  - cargo clippy
   - cargo fmt --all -- --check
-after_success: |
-  if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
+after_success: | 
+  if [[ "$TRAVIS_RUST_VERSION" == stable]]; then
+    cargo install cargo-tarpaulin && \
     cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   fi
