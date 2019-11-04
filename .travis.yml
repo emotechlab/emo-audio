@@ -16,11 +16,9 @@ matrix:
 before_script:
   - rustup component add rustfmt
 script:
-  - cargo install clippy
   - cargo clean
   - cargo build 
   - cargo test
-  - cargo clippy
   - cargo fmt --all -- --check
 after_success: | 
   if [[ "$TRAVIS_RUST_VERSION" == stable]]; then
