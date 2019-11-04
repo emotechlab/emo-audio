@@ -15,6 +15,9 @@ matrix:
     - rust: nightly
 before_script:
   - rustup component add rustfmt
+  - if [[ "$TRAVIS_RUST_VERSION" == stable]]; then
+      cargo install cargo-tarpaulin -f 
+    fi
 script:
   - cargo clean
   - cargo build 
@@ -22,6 +25,5 @@ script:
   - cargo fmt --all -- --check
 after_success: | 
   if [[ "$TRAVIS_RUST_VERSION" == stable]]; then
-    cargo install cargo-tarpaulin && \
     cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   fi
