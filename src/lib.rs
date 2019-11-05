@@ -2,7 +2,7 @@
 /// around ndarray.
 use ndarray::Array2;
 use rustfft::num_complex::Complex;
-use std::f32::{NAN, consts::PI};
+use std::f32::{consts::PI, NAN};
 
 /// Module containing an implementation of a short time fourier transform
 pub mod stft;
