@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use pars_engine::audio::*;
+use emo_audio::stft::*;
 use rand::distributions::Uniform;
 use rand::prelude::*;
 
