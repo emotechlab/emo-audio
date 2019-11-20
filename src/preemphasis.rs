@@ -1,4 +1,4 @@
-use ndarray::{prelude::*, Data, ScalarOperand};
+use ndarray::{prelude::*, Data, DataMut, ScalarOperand};
 use num_traits::{real::Real, NumAssignOps};
 
 /// Implements a preemphasis extension trait on data. This transforms a sample
@@ -17,6 +17,15 @@ where
     fn preemphasis(&self, coefficient: T) -> Self::Output;
 }
 
+/// Runs preemphasis inplace on a type to minimise memory allocations
+pub trait PreemphasisInplaceExt<T>
+where
+    T: Real,
+{
+    /// Run preemphasis on a signal return a new altered version
+    fn preemphasis_inplace(&mut self, coefficient: T);
+}
+
 impl<T, U> PreemphasisExt<U> for ArrayBase<T, Ix1>
 where
     T: Data<Elem = U>,
@@ -33,9 +42,23 @@ where
     }
 }
 
+impl<T, U> PreemphasisInplaceExt<U> for ArrayBase<T, Ix1>
+where
+    T: DataMut<Elem = U>,
+    U: Clone + Real + NumAssignOps + ScalarOperand,
+{
+    fn preemphasis_inplace(&mut self, coefficient: U) {
+        let mut shift = Array1::zeros(self.len());
+        shift.slice_mut(s![1..]).assign(&self.slice(s![..-1]));
+        shift *= coefficient;
+
+        *self -= &shift;
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::PreemphasisExt;
+    use super::*;
     use float_cmp::approx_eq;
     use ndarray::Array1;
 
@@ -50,6 +73,16 @@ mod tests {
 
         let preemp_view = data.view().preemphasis(0.9f64);
         for (a, e) in preemp_view.iter().zip(expected.iter()) {
+            assert!(approx_eq!(f64, *a, *e));
+        }
+    }
+
+    #[test]
+    fn preemphasis_inplace_small_signal() {
+        let mut data: Array1<f64> = vec![1.0f64, 2.0f64, 3.0f64, 4.0f64].into();
+        data.preemphasis_inplace(0.9f64);
+        let expected: Vec<f64> = vec![1.0, 1.1, 1.2, 1.3];
+        for (a, e) in data.iter().zip(expected.iter()) {
             assert!(approx_eq!(f64, *a, *e));
         }
     }
