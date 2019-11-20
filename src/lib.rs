@@ -4,6 +4,8 @@ use ndarray::Array2;
 use rustfft::num_complex::Complex;
 use std::f32::{consts::PI, NAN};
 
+/// Preemphasis extension trait for 1D arrays
+pub mod preemphasis;
 /// Module containing an implementation of a short time fourier transform
 pub mod stft;
 
