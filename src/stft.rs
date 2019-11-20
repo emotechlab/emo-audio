@@ -210,17 +210,17 @@ impl ShortTimeFourierTransform {
             scratchpad.row_mut(i).assign(&Array1::from(data));
         }
 
+        let mut temp = Vec::with_capacity(self.n_fft);
         for (idx, mut col) in result.lanes_mut(Axis(0)).into_iter().enumerate() {
             let mut column = scratchpad.column(idx).into_owned();
-            let mut temp = Vec::with_capacity(self.n_fft);
-
+            temp.clear();
             temp.resize(self.n_fft, Complex::new(0.0, 0.0));
             if let Some(c) = column.view_mut().into_slice() {
                 fft.process(c, temp.as_mut_slice());
             }
             // Get rid of the mirrored values
             temp.resize(rows, Complex::new(0.0, 0.0));
-            col.assign(&Array1::from(temp));
+            col.assign(&Array1::from(temp.clone()));
         }
         Some(result)
     }
