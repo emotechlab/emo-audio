@@ -18,14 +18,14 @@ def get_stft_params():
 def generate_audio():
     return npr.rand(get_signal_length())
 
-def generate_stft_data(filename):
+def generate_spectrum_data(filename):
     audio = generate_audio()
     params = get_stft_params()
 
     mag_spectra = spectrum._spectrogram(y=audio, n_fft = int(params[0]),
             win_length=int(params[1]), hop_length=int(params[2]), 
-            power=params[3], window='hann', center=True, pad_mode='reflect')
-
+            power=params[3], window='hann', center=True, pad_mode='reflect')[0]
+    
     np.savez(filename, audio=audio, params=params, magnitude=mag_spectra)
 
 
@@ -39,4 +39,4 @@ if __name__ == "__main__":
     if not os.path.exists(args.folder):
         os.makedirs(args.folder)
     for i in range(args.samples):
-        generate_stft_data(os.path.join(args.folder, f'data_{i}.npz'))
+        generate_spectrum_data(os.path.join(args.folder, f'data_{i}.npz'))

@@ -1,3 +1,4 @@
+use float_cmp::approx_eq;
 use ndarray_npy::NpzReader;
 use std::env;
 use std::fs::{read_dir, File};
@@ -12,7 +13,7 @@ fn check_data_folder() -> PathBuf {
     env::set_current_dir(&test_dir).unwrap();
     let data_dir = test_dir.join("data");
     if !data_dir.exists() {
-        Command::new("python3")
+        Command::new("python")
             .arg("init_data_dir.py")
             .arg("-f=data")
             .arg("-s 10")
@@ -32,18 +33,24 @@ fn spectrogram_equivalence() {
         }
 
         let mut npz = NpzReader::new(File::open(entry.path()).unwrap()).unwrap();
-        println!("{:?}", npz.names());
         let samples: Array1<f64> = npz.by_name("audio.npy").unwrap();
-        let result: Array2<f64> = npz.by_name("magnitude.npy").unwrap();
-        let params: Array1<f64> = npz.by_name("params.npy").unwrap();
+        let result: Array2<f32> = npz.by_name("magnitude.npy").unwrap();
+        let params: Array1<f32> = npz.by_name("params.npy").unwrap();
 
-        let stft = StftBuilder::new()
-            .set_fft_num(params[0] as usize)
-            .set_window_len(params[1] as usize)
-            .set_hop_len(params[2] as usize)
-            .set_centred(true)
-            .build();
+        if !result.is_empty() {
+            let stft = StftBuilder::new()
+                .set_fft_num(params[0] as usize)
+                .set_window_len(params[1] as usize)
+                .set_hop_len(params[2] as usize)
+                .set_centred(true)
+                .build();
 
-        let spectra = samples.spectrum(stft, Some(params[3] as f32));
+            let spectra = samples.spectrum(stft, Some(params[3] as f32)).unwrap();
+            assert_eq!(spectra.dim(), result.dim());
+            for (a, e) in spectra.iter().zip(result.iter()) {
+                println!("Comparing {} and {}", a, e);
+                assert!(approx_eq!(f32, *a, *e, epsilon = 1e-4));
+            }
+        }
     }
 }
