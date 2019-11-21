@@ -1,2 +1,3 @@
 librosa==0.7.1
 numpy==1.16
+setuptools==41.6
