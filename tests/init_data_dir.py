@@ -40,3 +40,4 @@ if __name__ == "__main__":
         os.makedirs(args.folder)
     for i in range(args.samples):
         generate_spectrum_data(os.path.join(args.folder, f'data_{i}.npz'))
+

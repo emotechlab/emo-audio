@@ -11,14 +11,15 @@ use ndarray::prelude::*;
 fn check_data_folder() -> PathBuf {
     let test_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests");
     env::set_current_dir(&test_dir).unwrap();
+    println!("{}", test_dir.display());
     let data_dir = test_dir.join("data");
     if !data_dir.exists() {
-        Command::new("python")
+        let r = Command::new("python3")
             .arg("init_data_dir.py")
-            .arg("-f=data")
+            .arg(format!("-f={}", data_dir.display()))
             .arg("-s 10")
             .output()
-            .expect("Failed to run equivalence tests");
+            .expect("Failed to create test data");
     }
     data_dir
 }
@@ -45,10 +46,10 @@ fn spectrogram_equivalence() {
                 .set_centred(true)
                 .build();
 
+            println!("Processing {}", entry.path().display());
             let spectra = samples.spectrum(stft, Some(params[3] as f32)).unwrap();
             assert_eq!(spectra.dim(), result.dim());
             for (a, e) in spectra.iter().zip(result.iter()) {
-                println!("Comparing {} and {}", a, e);
                 assert!(approx_eq!(f32, *a, *e, epsilon = 1e-4));
             }
         }
