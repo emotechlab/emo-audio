@@ -1,2 +1,2 @@
 librosa==0.7.1
-numpy==1.17.4
+numpy==1.16
