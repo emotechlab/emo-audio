@@ -15,7 +15,7 @@ matrix:
     - rust: nightly
 before_script:
   - rustup component add rustfmt
-  - pip install -r requirements-test.txt
+  - pip install --user -r requirements-test.txt
 script:
   - cargo clean
   - cargo build 
