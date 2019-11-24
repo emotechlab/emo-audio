@@ -1,4 +1,5 @@
 import argparse
+import librosa
 from librosa import spectrum
 import numpy.random as npr
 import numpy as np
@@ -6,13 +7,13 @@ import os
 
 def get_signal_length():
     # Assuming 16KHz sample rate this would be 10ms -> 1s audio sample
-    return npr.randint(160, 16000)
+    return npr.randint(5012, 16000)
 
 def get_stft_params():
-    nfft = npr.randint(1, 1024) * 2
-    win_length = npr.randint(4, nfft)
+    nfft = npr.choice([512, 1024, 2048])
+    win_length = npr.choice([nfft/8, nfft/4, nfft/2, nfft])
     hop_length = npr.randint(1, win_length/4)
-    power = npr.random() * 1.5 + 0.5
+    power = npr.choice([1.0, 2.0])
     return np.array([nfft, win_length, hop_length, power], dtype='float32')
 
 def generate_audio():
@@ -21,12 +22,20 @@ def generate_audio():
 def generate_spectrum_data(filename):
     audio = generate_audio()
     params = get_stft_params()
+    stft = librosa.stft(y=audio, n_fft=int(params[0]),
+            win_length=int(params[1]), hop_length=int(params[2]),
+            window='hann', center=True, pad_mode='reflect')[0]
+    stft, _ = librosa.magphase(stft)
+    if stft.ndim is 1:
+        stft = np.expand_dims(stft, axis=0)
 
     mag_spectra = spectrum._spectrogram(y=audio, n_fft = int(params[0]),
             win_length=int(params[1]), hop_length=int(params[2]), 
             power=params[3], window='hann', center=True, pad_mode='reflect')[0]
+    if mag_spectra.ndim is 1:
+        mag_spectra = np.expand_dims(mag_spectra, axis=1)
     
-    np.savez(filename, audio=audio, params=params, magnitude=mag_spectra)
+    np.savez(filename, audio=audio, params=params, stft=stft, magnitude=mag_spectra)
 
 
 
