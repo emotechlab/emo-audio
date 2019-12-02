@@ -19,7 +19,7 @@ def get_stft_params():
     if current < 1.0:
         current = 1.0
     choices = [current]
-    while current*0.5 > 0:
+    while current*0.5 >= 1.0:
         current = current * 0.5
         choices.append(current)
     hop_length = npr.choice(choices)
