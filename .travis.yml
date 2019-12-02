@@ -31,6 +31,7 @@ script:
   - cargo fmt --all -- --check
 after_success: | 
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
+    cargo test -- --ignored
     cargo install -f cargo-tarpaulin
     cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   fi
