@@ -20,7 +20,7 @@ fn check_data_folder() -> PathBuf {
 
     let _m = DIR_MUTEX.lock().expect("Directory mutex poisoned");
     if !data_dir.exists() {
-        Command::new("python3")
+        Command::new("python")
             .arg("init_data_dir.py")
             .arg(format!("-f={}", data_dir.display()))
             .arg("-s 10")
