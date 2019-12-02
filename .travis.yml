@@ -22,6 +22,8 @@ before_install:
   - virtualenv venv
   - source venv/bin/activate
   - pip install -r requirements-test.txt
+  - mkdir tests/data
+  - python tests/init_data_dir.py -f tests/data -s 10
 script:
   - cargo clean
   - cargo build 
