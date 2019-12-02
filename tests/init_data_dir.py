@@ -56,5 +56,5 @@ if __name__ == "__main__":
     if not os.path.exists(args.folder):
         os.makedirs(args.folder)
     for i in range(args.samples):
-        generate_spectrum_data(os.path.join(args.folder, f'data_{i}.npz'))
+        generate_spectrum_data(os.path.join(args.folder, 'data_{}.npz'.format(i)))
 
