@@ -17,7 +17,11 @@ matrix:
     - rust: nightly
 before_script:
   - rustup component add rustfmt
-  - pip3 install --user travis -r requirements-test.txt
+before_install:
+  - python -m pip install --user virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements-test.txt
 script:
   - cargo clean
   - cargo build 
