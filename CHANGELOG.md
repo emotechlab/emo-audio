@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Preemphasis extension trait
 - [Internal] Criterion for benchmarking and a benchmark for the STFT
 - [Internal] cargo-fuzz test for STFT that takes a corpus of wav files
+- [Internal] equivalence tests based on librosa implementations (ignored by default)
 
 ### Changed
 
