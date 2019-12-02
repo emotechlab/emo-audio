@@ -25,7 +25,7 @@ before_install:
 script:
   - cargo clean
   - cargo build 
-  - cargo test
+  - RUST_BACKTRACE=1 cargo test
   - cargo fmt --all -- --check
 after_success: | 
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then

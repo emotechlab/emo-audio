@@ -31,7 +31,6 @@ fn check_data_folder() -> PathBuf {
 }
 
 fn stft_from_params(params: ArrayView1<f32>) -> ShortTimeFourierTransform {
-    println!(" nfft {}\n winlen {}\n hop_len {}", params[0], params[1], params[2]);
     StftBuilder::new()
         .set_fft_num(params[0] as usize)
         .set_window_len(params[1] as usize)
@@ -56,8 +55,6 @@ fn stft_equivalence() {
 
         if !result.is_empty() {
             let stft = stft_from_params(params.view());
-            println!("Processing {}", entry.path().display());
-            println!("Samples length {}", samples.len());
             let stft_res = stft.run(samples.as_slice().unwrap()).unwrap().mag();
             assert_eq!(stft_res.dim(), result.dim());
             for (a, e) in stft_res.iter().zip(result.iter()) {
@@ -84,10 +81,10 @@ fn spectrogram_equivalence() {
 
         if !result.is_empty() {
             let stft = stft_from_params(params.view());
-            println!("Processing {}", entry.path().display());
             let spectra = samples.spectrum(stft, Some(params[3] as f32)).unwrap();
             assert_eq!(spectra.dim(), result.dim());
             for (a, e) in spectra.iter().zip(result.iter()) {
+                println!("{} vs {}", a, e);
                 assert!(approx_eq!(f32, *a, *e, ulps = 7));
             }
         }
