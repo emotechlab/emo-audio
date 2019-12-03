@@ -18,7 +18,7 @@ where
 {
     /// Convert the complex array into it's magnitude spectra
     fn mag(&self) -> Array2<f32> {
-        self.mapv(|x| (x.re.powi(2) + x.im.powi(2)).sqrt())
+        self.mapv(|x| x.norm())
     }
 
     /// Convert every complex number into it's phase. Result may contain NAN
@@ -26,8 +26,7 @@ where
     fn phase(&self) -> Array2<f32> {
         self.mapv(|x| {
             if x.re > 0.0 || x.im.abs() > std::f32::EPSILON {
-                let mag = (x.re.powi(2) + x.im.powi(2)).sqrt();
-                2.0 * (x.im / (mag + x.re)).atan()
+                2.0 * (x.im / (x.norm() + x.re)).atan()
             } else if x.re < 0.0 && x.im.abs() <= std::f32::EPSILON {
                 PI
             } else {

@@ -5,6 +5,8 @@ addons:
   apt:
     packages:
       - libssl-dev
+      - python3
+      - python3-pip
 cache: cargo
 rust:
   - stable
@@ -15,13 +17,21 @@ matrix:
     - rust: nightly
 before_script:
   - rustup component add rustfmt
+before_install:
+  - python3 -m pip install --user virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements-test.txt
+  - mkdir tests/data
+  - python tests/init_data_dir.py -f tests/data -s 10
 script:
   - cargo clean
   - cargo build 
-  - cargo test
+  - RUST_BACKTRACE=1 cargo test
   - cargo fmt --all -- --check
 after_success: | 
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
+    cargo test -- --ignored
     cargo install -f cargo-tarpaulin
     cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   fi
