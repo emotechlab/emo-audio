@@ -4,8 +4,7 @@ use num_traits::{Num, NumCast};
 pub fn power<T: Num + NumCast>(samples: &[T]) -> f64 {
     samples
         .iter()
-        .map(|x| x.to_f64().unwrap_or_default().powi(2))
-        .fold(0.0, |acc, x| x + acc)
+        .fold(0.0, |acc, x| x.to_f64().unwrap_or_default().powi(2) + acc)
         / (samples.len() as f64)
 }
 

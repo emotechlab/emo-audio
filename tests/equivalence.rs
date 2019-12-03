@@ -40,7 +40,6 @@ fn stft_from_params(params: ArrayView1<f32>) -> ShortTimeFourierTransform {
 }
 
 #[test]
-#[ignore]
 fn stft_equivalence() {
     let data_dir = check_data_folder();
     for entry in read_dir(&data_dir).unwrap() {
@@ -56,17 +55,26 @@ fn stft_equivalence() {
 
         if !result.is_empty() {
             let stft = stft_from_params(params.view());
+            // Parseval's theorem says sum of squares of time domain == frequency domain
+            // use this to choose an epsilon
+            let max_possible_bin_value = samples.iter().fold(0.0, |acc, x| acc + x.powi(2));
+            let eps = (max_possible_bin_value * 2e-4) as f32;
             let stft_res = stft.run(samples.as_slice().unwrap()).unwrap().mag();
             assert_eq!(stft_res.dim(), result.dim());
             for (a, e) in stft_res.iter().zip(result.iter()) {
-                assert!(approx_eq!(f32, *a, *e, ulps = 7), "{} vs {}", a, e);
+                assert!(
+                    approx_eq!(f32, *a, *e, epsilon = eps),
+                    "{} ~= {} (+/- {})",
+                    a,
+                    e,
+                    eps
+                );
             }
         }
     }
 }
 
 #[test]
-#[ignore]
 fn spectrogram_equivalence() {
     let data_dir = check_data_folder();
     for entry in read_dir(&data_dir).unwrap() {
@@ -81,11 +89,20 @@ fn spectrogram_equivalence() {
         let params: Array1<f32> = npz.by_name("params.npy").unwrap();
 
         if !result.is_empty() {
+            let max_possible_bin_value = samples.iter().fold(0.0, |acc, x| acc + x.powi(2));
+            let eps = (max_possible_bin_value.powf(params[3] as f64) * 2e-4) as f32;
+
             let stft = stft_from_params(params.view());
-            let spectra = samples.spectrum(stft, Some(params[3] as f32)).unwrap();
+            let spectra = samples.spectrum(stft, Some(params[3])).unwrap();
             assert_eq!(spectra.dim(), result.dim());
             for (a, e) in spectra.iter().zip(result.iter()) {
-                assert!(approx_eq!(f32, *a, *e, ulps = 7), "{} vs {}", a, e);
+                assert!(
+                    approx_eq!(f32, *a, *e, epsilon = eps),
+                    "{} ~= {} (+/- {})",
+                    a,
+                    e,
+                    eps
+                );
             }
         }
     }
