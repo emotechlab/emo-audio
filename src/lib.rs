@@ -1,3 +1,5 @@
+/// Metrics that can be gathered from the time or frequency domains
+pub mod metrics;
 /// Preemphasis extension trait for 1D arrays
 pub mod preemphasis;
 /// Takes an audio signal and returns a spectrogram
