@@ -2,7 +2,7 @@
 use libfuzzer_sys::fuzz_target;
 
 use hound::WavReader;
-use emo_audio::{FrequencyComponents, stft::*};
+use emo_audio::prelude::*;
 
 fuzz_target!(|data: &[u8]| {
     if let Ok(r) = WavReader::new(data) {
