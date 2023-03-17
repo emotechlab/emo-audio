@@ -50,8 +50,9 @@ fn stft_equivalence() {
 
         let mut npz = NpzReader::new(File::open(entry.path()).unwrap()).unwrap();
         let samples: Array1<f64> = npz.by_name("audio.npy").unwrap();
-        let result: Array2<f32> = npz.by_name("stft.npy").unwrap();
+        let result: Array2<f64> = npz.by_name("stft.npy").unwrap();
         let params: Array1<f32> = npz.by_name("params.npy").unwrap();
+        let result = result.mapv(|x| x as f32);
 
         if !result.is_empty() {
             let stft = stft_from_params(params.view());
@@ -85,8 +86,9 @@ fn spectrogram_equivalence() {
 
         let mut npz = NpzReader::new(File::open(entry.path()).unwrap()).unwrap();
         let samples: Array1<f64> = npz.by_name("audio.npy").unwrap();
-        let result: Array2<f32> = npz.by_name("magnitude.npy").unwrap();
+        let result: Array2<f64> = npz.by_name("magnitude.npy").unwrap();
         let params: Array1<f32> = npz.by_name("params.npy").unwrap();
+        let result = result.mapv(|x| x as f32);
 
         if !result.is_empty() {
             let max_possible_bin_value = samples.iter().fold(0.0, |acc, x| acc + x.powi(2));

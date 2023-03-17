@@ -1,6 +1,6 @@
 use ndarray::{prelude::*, s};
 use num_traits::{Bounded, Num, NumCast};
-use rustfft::{num_complex::Complex, FFTplanner};
+use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
 
 /// Padding mode for the audio signal
@@ -195,7 +195,7 @@ impl ShortTimeFourierTransform {
 
         let mut result = unsafe { Array2::uninitialized((rows, frame_len)) };
         let mut scratchpad = unsafe { Array2::uninitialized((self.n_fft, frame_len)) };
-        let fft = FFTplanner::new(false).plan_fft(self.n_fft);
+        let fft = FftPlanner::new().plan_fft_forward(self.n_fft);
 
         for i in 0..self.n_fft {
             let win_coef = window_mat[i];
@@ -216,7 +216,8 @@ impl ShortTimeFourierTransform {
             temp.clear();
             temp.resize(self.n_fft, Complex::new(0.0, 0.0));
             if let Some(c) = column.view_mut().into_slice() {
-                fft.process(c, temp.as_mut_slice());
+                fft.process(c);
+                temp.clone_from_slice(c);
             }
             // Get rid of the mirrored values
             temp.resize(rows, Complex::new(0.0, 0.0));
