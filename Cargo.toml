@@ -9,16 +9,16 @@ license = "MIT/Apache2.0"
 edition = "2018"
 
 [dependencies]
-ndarray = "0.13"
-num-traits = "0.2.8"
-rustfft = "3.0.0"
+ndarray = "0.15.4"
+num-traits = "0.2.15"
+rustfft = "6.1.0"
 
 [dev-dependencies]
-float-cmp = "0.5.2"
+float-cmp = "0.6.0"
 criterion = "0.3"
 lazy_static = "1.2"
 rand = "0.7"
-ndarray-npy = "0.5.0"
+ndarray-npy = "0.8.1"
 
 [profile.bench]
 opt-level = 3

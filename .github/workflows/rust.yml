@@ -1,0 +1,39 @@
+---
+name: Build
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+env:
+  RUST_BACKTRACE: 1
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - stable
+        target:
+          - x86_64-unknown-linux-gnu
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.version }}
+          components: rustfmt
+      - name: cache
+        uses: Swatinem/rust-cache@v2
+      - name: test-setup
+        run: |
+          python3 -m pip install --user virtualenv
+          virtualenv venv
+          source venv/bin/activate
+          pip install -r requirements-test.txt
+          mkdir tests/data
+          python tests/init_data_dir.py -f tests/data -s 10
+      - name: test
+        run: cargo test
+      - name: check formatting
+        run: cargo fmt -- --check

@@ -1,6 +1,6 @@
 import argparse
 import librosa
-from librosa import spectrum
+from librosa.core import spectrum
 import numpy.random as npr
 import numpy as np
 import os
@@ -36,13 +36,13 @@ def generate_spectrum_data(filename):
             win_length=int(params[1]), hop_length=int(params[2]),
             window='hann', center=True, pad_mode='reflect')
     stft, _ = librosa.magphase(stft)
-    if stft.ndim is 1:
+    if stft.ndim == 1:
         stft = np.expand_dims(stft, axis=0)
 
     mag_spectra = spectrum._spectrogram(y=audio, n_fft = int(params[0]),
             win_length=int(params[1]), hop_length=int(params[2]), 
             power=params[3], window='hann', center=True, pad_mode='reflect')[0]
-    if mag_spectra.ndim is 1:
+    if mag_spectra.ndim == 1:
         mag_spectra = np.expand_dims(mag_spectra, axis=1)
     
     np.savez(filename, audio=audio, params=params, stft=stft, magnitude=mag_spectra)
