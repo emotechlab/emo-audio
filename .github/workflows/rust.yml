@@ -27,7 +27,6 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: test-setup
         run: |
-          sudo apt-get install build-essential gfortran liblapack3 liblapack-dev libopenblas-dev
           python3 -m pip install --user virtualenv
           virtualenv venv
           source venv/bin/activate
